@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: ap-northeast-2
+  AWS_REGION: ap-southeast-2
   ECR_REPOSITORY: aws-lab-frontend # [주의] ECR에 이 이름으로 리포지토리를 미리 만들어야 합니다.
 
 jobs:
