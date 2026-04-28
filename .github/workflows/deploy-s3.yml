@@ -16,6 +16,24 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    # 1. Node 설정 
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    # 2. 설치
+    - name: Install Dependencies
+      run: npm install
+
+    # 3. 빌드 
+    - name: Build React App
+      run: npm run build
+      env:
+        REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+
+    # 4. AWS 인증 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -23,17 +41,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
-
-    - name: Build React App
-      run: |
-        echo "REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }}" > .env
-        npm install
-        npm run build
-
+    # 5. S3 업로드
     - name: Deploy to Amazon S3
       run: |
         aws s3 sync build/ s3://${{ env.S3_BUCKET_NAME }} --delete
